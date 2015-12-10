@@ -559,7 +559,7 @@
 
             if (t1.data !== t2.data) {
                 // Comment or text node.
-                if (t1.nodeName === '#text') {
+                if (t1.nodeName === '#comment') {
                     return [new Diff({
                         action: 'modifyComment',
                         route: route,
