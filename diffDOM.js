@@ -622,7 +622,7 @@
             var objNode = {}, dobj = this;
             objNode.nodeName = node.nodeName;
             if (objNode.nodeName === '#text' || objNode.nodeName === '#comment') {
-                objNode.data = node.data;
+                objNode.data = node.nodeValue || node.data;
             } else {
                 if (node.attributes && node.attributes.length > 0) {
                     objNode.attributes = {};
@@ -632,13 +632,11 @@
                         }
                     );
                 }
-                if (node.childNodes && node.childNodes.length > 0) {
+                if (node.firstChild) {
                     objNode.childNodes = [];
-                    Array.prototype.slice.call(node.childNodes).forEach(
-                        function(childNode) {
-                            objNode.childNodes.push(dobj.nodeToObj(childNode));
-                        }
-                    );
+                    for (var childNode = node.firstChild; childNode !== null; childNode = childNode.nextSibling) {
+                        objNode.childNodes.push(dobj.nodeToObj(childNode));
+                    }
                 }
                 if (this.valueDiffing) {
                     if (node.value) {
