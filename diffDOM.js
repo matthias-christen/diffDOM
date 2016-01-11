@@ -620,7 +620,24 @@
         },
         nodeToObj: function(node) {
             var objNode = {}, dobj = this;
-            objNode.nodeName = node.nodeName;
+
+            if (node.nodeName)
+                objNode.nodeName = obj.nodeName;
+            else {
+                // cheerio doesn't define "nodeName"
+                switch (node.nodeType) {
+                    case 3:
+                        objNode.nodeName = '#text';
+                        break;
+                    case 8:
+                        objNode.nodeName = '#comment';
+                        break;
+                    default:
+                        objNode.nodeName = node.tagName.toUpperCase();
+                        break;
+                }
+            }
+
             if (objNode.nodeName === '#text' || objNode.nodeName === '#comment') {
                 objNode.data = node.nodeValue || node.data;
             } else {
@@ -631,6 +648,9 @@
                             objNode.attributes[attribute.name] = attribute.value;
                         }
                     );
+                } else if (node.attribs) {
+                    // cheerio has "attribs" instead of "attributes"
+                    objNode.attributes = node.attribs;
                 }
                 if (node.firstChild) {
                     objNode.childNodes = [];
